@@ -27,3 +27,25 @@ User.find_or_create_by!(email: "user@example.com") do |u|
   u.password_confirmation = "hackme"
   u.member_profile_attributes = { name: "User" }
 end
+
+os_tag = Tag.find_or_create_by!(name: "Operating System")
+os_books = [
+  { title: "Modern Operating Systems", author: "Andrew S. Tanenbaum" },
+  { title: "Operating System Concepts", author: "Abraham Silberschatz" },
+  { title: "The Design of the UNIX Operating System", author: "Maurice J. Bach" },
+  { title: "Operating Systems: Three Easy Pieces", author: "Remzi Arpaci-Dusseau" },
+  { title: "Linux Kernel Development", author: "Robert Love" },
+  { title: "Windows Internals", author: "Mark Russinovich" },
+  { title: "The Art of Unix Programming", author: "Eric S. Raymond" },
+  { title: "Operating Systems: Internals and Design Principles", author: "William Stallings" },
+  { title: "Unix Network Programming", author: "W. Richard Stevens" },
+  { title: "Real-Time Systems Design and Analysis", author: "Phillip A. Laplante" }
+]
+os_books.each do |data|
+  author = Author.find_or_create_by!(name: data[:author])
+  book = Book.create!(
+    name: data[:title],
+    author: author
+  )
+  BookTag.create!(book: book, tag: os_tag)
+end
