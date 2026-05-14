@@ -13,6 +13,7 @@ class Ability
       can :manage, Book
       can :manage, BookTag
       can :manage, Tag
+      can :manage, Loan
       can :read, User
       can :read, MemberProfile
     else

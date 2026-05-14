@@ -1,0 +1,52 @@
+<div class="mb-6"><h1 class="text-xl font-bold text-slate-900">New Loan</h1></div>
+
+<div class="bg-white rounded-xl border border-stone-200 p-6 max-w-lg">
+  <%= form_with model: [:dashboard, @loan], class: "space-y-5" do |f| %>
+    <% if @loan.errors.any? %>
+      <div class="p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-700">
+        <ul class="list-disc pl-4 space-y-0.5">
+          <% @loan.errors.full_messages.each do |msg| %><li><%= msg %></li><% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div>
+      <%= f.label :book_id, "Book", class: "block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1.5" %>
+      <% if @books.empty? %>
+        <p class="text-sm text-slate-400 italic">No books currently available for loan.</p>
+      <% else %>
+        <%= f.select :book_id,
+              options_from_collection_for_select(@books, :id, :name, @loan.book_id),
+              { prompt: "Select a book" },
+              class: "w-full px-3 py-2.5 rounded-lg border border-stone-200 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition" %>
+        <p class="text-xs text-slate-400 mt-1">Only available books are shown.</p>
+      <% end %>
+    </div>
+
+    <div>
+      <%= f.label :user_id, "Member", class: "block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1.5" %>
+      <%= f.select :user_id,
+            @users.map { |u| ["#{u.member_profile&.name || "–"} (#{u.email})", u.id] },
+            { prompt: "Select a member" },
+            class: "w-full px-3 py-2.5 rounded-lg border border-stone-200 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition" %>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <%= f.label :loaned_at, "Loan Date", class: "block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1.5" %>
+        <%= f.date_field :loaned_at, value: @loan.loaned_at&.to_date,
+              class: "w-full px-3 py-2.5 rounded-lg border border-stone-200 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition" %>
+      </div>
+      <div>
+        <%= f.label :due_at, "Due Date", class: "block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1.5" %>
+        <%= f.date_field :due_at, value: @loan.due_at&.to_date,
+              class: "w-full px-3 py-2.5 rounded-lg border border-stone-200 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition" %>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3 pt-2">
+      <%= f.submit "Create Loan", class: "px-5 py-2.5 rounded-lg bg-yellow-400 text-slate-900 text-sm font-semibold hover:bg-yellow-500 transition-colors cursor-pointer" %>
+      <%= link_to "Cancel", dashboard_loans_path, class: "text-sm text-slate-500 hover:text-slate-700 transition-colors" %>
+    </div>
+  <% end %>
+</div>

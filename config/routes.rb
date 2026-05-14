@@ -12,5 +12,20 @@ Rails.application.routes.draw do
 
   root "home#index"
 
-  resources :books
+  resources :books, only: [ :index, :show ] do
+    resources :loans, only: [ :create ]
+  end
+
+  namespace :dashboard do
+    root to: "overview#index"
+    resources :books
+    resources :authors
+    resources :tags
+    resources :loans, except: [:show, :edit, :update] do
+      member do
+        patch :return_book
+      end
+    end
+    resources :users, only: [:index, :show, :update, :destroy]
+  end
 end

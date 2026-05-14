@@ -1,0 +1,67 @@
+<div class="mb-6">
+  <h1 class="text-xl font-bold text-slate-900">Overview</h1>
+  <p class="text-sm text-slate-400 mt-0.5">Welcome back, <%= current_user.member_profile&.name || current_user.email %></p>
+</div>
+
+<%# Stats grid %>
+<div class="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-8">
+  <% [
+    { label: "Total Books",    value: @total_books,   icon: "M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253",  link: dashboard_books_path },
+    { label: "Authors",        value: @total_authors, icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z",                                                                                                                                                                                                        link: dashboard_authors_path },
+    { label: "Tags",           value: @total_tags,    icon: "M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z",                                                                                                                                                 link: dashboard_tags_path },
+    { label: "Active Loans",   value: @active_loans,  icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2",                                                                                                                                    link: dashboard_loans_path },
+    { label: "Overdue",        value: @overdue_loans, icon: "M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z",                                                                                                                                                                                                                         link: dashboard_loans_path, danger: true },
+    { label: "Total Users",    value: @total_users,   icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z",                                                          link: dashboard_users_path },
+  ].each do |s| %>
+    <%= link_to s[:link], class: "bg-white rounded-xl border #{s[:danger] && s[:value] > 0 ? 'border-red-200 hover:border-red-300' : 'border-stone-200 hover:border-yellow-300'} p-4 transition-colors group" do %>
+      <p class="text-2xl font-bold <%= s[:danger] && s[:value] > 0 ? 'text-red-600' : 'text-slate-900' %>"><%= s[:value] %></p>
+      <div class="flex items-center gap-1.5 mt-1">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 shrink-0 <%= s[:danger] && s[:value] > 0 ? 'text-red-400' : 'text-yellow-500' %>" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="<%= s[:icon] %>" />
+        </svg>
+        <p class="text-xs text-slate-500 font-medium"><%= s[:label] %></p>
+      </div>
+    <% end %>
+  <% end %>
+</div>
+
+<%# Recent loans %>
+<div class="bg-white rounded-xl border border-stone-200 overflow-hidden">
+  <div class="flex items-center justify-between px-5 py-4 border-b border-stone-100">
+    <h2 class="text-sm font-semibold text-slate-900">Recent Loans</h2>
+    <%= link_to "View all →", dashboard_loans_path, class: "text-xs text-yellow-600 font-medium hover:text-yellow-700" %>
+  </div>
+
+  <% if @recent_loans.any? %>
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-stone-100">
+          <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">Book</th>
+          <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">Member</th>
+          <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">Due</th>
+          <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @recent_loans.each do |loan| %>
+          <tr class="border-b border-stone-50 hover:bg-stone-50 transition-colors">
+            <td class="px-5 py-3 font-medium text-slate-900 truncate max-w-[180px]"><%= loan.book.name %></td>
+            <td class="px-5 py-3 text-slate-500 truncate max-w-[140px]"><%= loan.user.member_profile&.name || loan.user.email %></td>
+            <td class="px-5 py-3 text-slate-500"><%= loan.due_at&.strftime("%d %b %Y") %></td>
+            <td class="px-5 py-3">
+              <% if loan.returned_at %>
+                <span class="text-xs font-medium text-slate-400">Returned</span>
+              <% elsif loan.due_at && loan.due_at < Time.current %>
+                <span class="text-xs font-medium text-red-600">Overdue</span>
+              <% else %>
+                <span class="text-xs font-medium text-emerald-600">Active</span>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="px-5 py-8 text-sm text-slate-400 text-center">No loans yet.</p>
+  <% end %>
+</div>
