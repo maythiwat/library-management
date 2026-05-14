@@ -1,5 +1,5 @@
 class Dashboard::UsersController < Dashboard::BaseController
-  before_action :set_user, only: [:show, :update, :destroy]
+  before_action :set_user, only: [ :show, :update, :destroy ]
 
   def index
     authorize! :read, User

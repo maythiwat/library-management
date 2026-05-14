@@ -2,7 +2,12 @@ class BooksController < ApplicationController
   before_action :set_book, only: [ :show ]
 
   def index
+    @query = params[:q].to_s.strip
     @books = Book.includes(:author, :tags).order(:name)
+    if @query.present?
+      @books = @books.joins(:author)
+                     .where("books.name ILIKE :q OR authors.name ILIKE :q", q: "%#{@query}%")
+    end
   end
 
   def show

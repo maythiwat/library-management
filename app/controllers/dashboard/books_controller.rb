@@ -1,5 +1,5 @@
 class Dashboard::BooksController < Dashboard::BaseController
-  before_action :set_book, only: [:edit, :update, :destroy]
+  before_action :set_book, only: [ :edit, :update, :destroy ]
 
   def index
     @books = Book.includes(:author, :tags).order(:name)

@@ -23,11 +23,11 @@ Rails.application.routes.draw do
     resources :books
     resources :authors
     resources :tags
-    resources :loans, except: [:show, :edit, :update] do
+    resources :loans, except: [ :show, :edit, :update ] do
       member do
         patch :return_book
       end
     end
-    resources :users, only: [:index, :show, :update, :destroy]
+    resources :users, only: [ :index, :show, :update, :destroy ]
   end
 end
