@@ -64,3 +64,5 @@ end
 gem "devise", "~> 5.0"
 gem "paranoia", "~> 3.1"
 gem "paper_trail", "~> 17.0"
+gem "rolify", "~> 6.0"
+gem "cancancan", "~> 3.6"

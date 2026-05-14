@@ -3,4 +3,8 @@ class ApplicationController < ActionController::Base
   allow_browser versions: :modern
 
   before_action :set_paper_trail_whodunnit
+
+  rescue_from CanCan::AccessDenied do |exception|
+    redirect_to root_path, alert: "You are not authorized to do that."
+  end
 end
