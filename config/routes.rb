@@ -21,7 +21,14 @@ Rails.application.routes.draw do
 
   namespace :dashboard do
     root to: "overview#index"
-    resources :books
+    resources :books do
+      member do
+        patch :restore
+      end
+      collection do
+        get :trash
+      end
+    end
     resources :authors
     resources :tags
     resources :loans, except: [ :show, :edit, :update ] do

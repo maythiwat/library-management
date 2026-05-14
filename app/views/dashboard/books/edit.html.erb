@@ -1,7 +1,75 @@
-<div class="mb-6">
-  <h1 class="text-xl font-bold text-slate-900">Edit Book</h1>
-  <p class="text-sm text-slate-400 mt-0.5"><%= @book.name %></p>
+<div class="mb-6 flex items-center justify-between">
+  <div>
+    <h1 class="text-xl font-bold text-slate-900">Edit Book</h1>
+    <p class="text-sm text-slate-400 mt-0.5"><%= @book.name %></p>
+  </div>
+  <%= link_to "← Books", dashboard_books_path, class: "text-sm text-slate-500 hover:text-slate-700 transition-colors" %>
 </div>
-<div class="bg-white rounded-xl border border-stone-200 p-6 max-w-xl">
-  <%= render "form", book: @book %>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+  <%# Form %>
+  <div class="bg-white rounded-xl border border-stone-200 p-6">
+    <%= render "form", book: @book %>
+  </div>
+
+  <%# Edit history %>
+  <div class="bg-white rounded-xl border border-stone-200 overflow-hidden">
+    <div class="px-5 py-4 border-b border-stone-100">
+      <h2 class="text-sm font-semibold text-slate-900">
+        Edit History
+        <span class="text-slate-400 font-normal ml-1">(<%= @versions.count %>)</span>
+      </h2>
+    </div>
+
+    <% if @versions.any? %>
+      <div class="divide-y divide-stone-100 max-h-150 overflow-y-auto">
+        <% @versions.each do |version| %>
+          <% user = @version_users[version.whodunnit] %>
+          <div class="px-5 py-3.5">
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex items-center gap-2 min-w-0">
+                <% badge = case version.event
+                     when "create"  then "bg-emerald-50 text-emerald-700 border-emerald-200"
+                     when "update"  then "bg-yellow-50 text-yellow-700 border-yellow-200"
+                     when "destroy" then "bg-red-50 text-red-600 border-red-200"
+                     else                "bg-stone-100 text-slate-500 border-stone-200"
+                     end %>
+                <span class="text-xs font-semibold px-1.5 py-0.5 rounded border capitalize shrink-0 <%= badge %>">
+                  <%= version.event %>
+                </span>
+                <span class="text-xs text-slate-500 truncate">
+                  <%= user ? (user.member_profile&.name || user.email) : "Unknown" %>
+                </span>
+              </div>
+              <span class="text-xs text-slate-400 shrink-0 tabular-nums">
+                <%= version.created_at.strftime("%d %b %Y %H:%M") %>
+              </span>
+            </div>
+
+            <% if version.event == "update" %>
+              <% changes = (version.changeset || {}).except("updated_at", "created_at") %>
+              <% if changes.any? %>
+                <div class="mt-2 space-y-1">
+                  <% changes.each do |field, (from, to)| %>
+                    <div class="text-xs text-slate-500 flex flex-wrap gap-1 items-baseline">
+                      <span class="font-medium text-slate-600"><%= field.humanize %>:</span>
+                      <% if from.present? %>
+                        <span class="line-through text-slate-400 max-w-35 truncate inline-block"><%= from %></span>
+                        <span class="text-slate-300">→</span>
+                      <% end %>
+                      <span class="text-slate-700 max-w-35 truncate inline-block"><%= to.presence || "—" %></span>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="px-5 py-10 text-sm text-slate-400 text-center">No history recorded yet.</p>
+    <% end %>
+  </div>
+
 </div>
