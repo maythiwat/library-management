@@ -1,6 +1,17 @@
 class LoansController < ApplicationController
   before_action :authenticate_user!
 
+  def index
+    @active_loans = current_user.loans
+                                .includes(:book)
+                                .where(returned_at: nil)
+                                .order(due_at: :asc)
+    @past_loans   = current_user.loans
+                                .includes(:book)
+                                .where.not(returned_at: nil)
+                                .order(returned_at: :desc)
+  end
+
   def create
     @book = Book.find(params[:book_id])
 

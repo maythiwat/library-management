@@ -16,6 +16,8 @@ Rails.application.routes.draw do
     resources :loans, only: [ :create ]
   end
 
+  resources :loans, only: [ :index ]
+
   namespace :dashboard do
     root to: "overview#index"
     resources :books
