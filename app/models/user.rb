@@ -7,4 +7,7 @@ class User < ApplicationRecord
 
   has_one :member_profile, dependent: :destroy
   accepts_nested_attributes_for :member_profile
+
+  has_many :loans
+  has_many :books, through: :loans
 end

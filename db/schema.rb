@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_14_041106) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_14_060755) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -37,6 +37,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_14_041106) do
     t.datetime "updated_at", null: false
     t.index ["author_id"], name: "index_books_on_author_id"
     t.index ["deleted_at"], name: "index_books_on_deleted_at"
+  end
+
+  create_table "loans", force: :cascade do |t|
+    t.bigint "book_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "due_at"
+    t.datetime "loaned_at"
+    t.datetime "returned_at"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["book_id"], name: "index_loans_on_book_id"
+    t.index ["user_id"], name: "index_loans_on_user_id"
   end
 
   create_table "member_profiles", force: :cascade do |t|
@@ -96,5 +108,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_14_041106) do
   add_foreign_key "book_tags", "books"
   add_foreign_key "book_tags", "tags"
   add_foreign_key "books", "authors"
+  add_foreign_key "loans", "books"
+  add_foreign_key "loans", "users"
   add_foreign_key "member_profiles", "users"
 end
