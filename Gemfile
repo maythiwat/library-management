@@ -62,3 +62,5 @@ group :development do
 end
 
 gem "devise", "~> 5.0"
+gem "paranoia", "~> 3.1"
+gem "paper_trail", "~> 17.0"
