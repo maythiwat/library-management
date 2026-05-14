@@ -38,4 +38,10 @@ Rails.application.routes.draw do
     end
     resources :users, only: [ :index, :show, :update, :destroy ]
   end
+
+  namespace :api do
+    namespace :v1 do
+      resources :books, only: [ :index, :show ]
+    end
+  end
 end
