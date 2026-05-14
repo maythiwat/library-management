@@ -56,6 +56,6 @@ class Dashboard::BooksController < Dashboard::BaseController
   end
 
   def book_params
-    params.require(:book).permit(:name, :author_id, tag_ids: [])
+    params.require(:book).permit(:name, :author_id, :thumbnail_url, tag_ids: [])
   end
 end
