@@ -20,6 +20,11 @@ class LoansController < ApplicationController
       return
     end
 
+    if current_user.loans.where(returned_at: nil).count >= 3
+      redirect_to book_path(@book), alert: "You can only have 3 active loans at a time."
+      return
+    end
+
     if @book.loans.where(user: current_user, returned_at: nil).exists?
       redirect_to book_path(@book), alert: "You already have this book on loan."
       return

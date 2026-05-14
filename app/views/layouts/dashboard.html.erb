@@ -13,10 +13,12 @@
 
   <body class="min-h-screen bg-stone-50 text-slate-900 antialiased">
 
-    <nav class="bg-white border-b border-stone-200">
-      <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav class="bg-white border-b border-stone-200" data-controller="toggle">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-14">
-          <div class="flex items-center gap-8">
+
+          <%# Logo + badge %>
+          <div class="flex items-center gap-3 shrink-0">
             <a href="/" class="flex items-center gap-2 font-bold text-base tracking-tight text-slate-900 hover:text-yellow-600 transition-colors">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -27,44 +29,76 @@
               <%= current_user.has_role?(:admin) ? "Admin" : "Librarian" %>
             </span>
           </div>
-          <div class="flex items-center gap-2">
-            <span class="text-sm text-slate-400 hidden sm:block"><%= current_user.email %></span>
+
+          <%# Desktop right side %>
+          <div class="hidden md:flex items-center gap-2">
+            <span class="text-sm text-slate-400"><%= current_user.email %></span>
             <%= link_to "← Back to site", root_path, class: "text-sm font-medium px-3 py-1.5 rounded-lg text-slate-600 hover:bg-stone-100 transition-colors" %>
             <%= button_to "Sign out", destroy_user_session_path, method: :delete,
                   class: "text-sm font-medium px-3 py-1.5 rounded-lg text-slate-600 hover:bg-stone-100 transition-colors cursor-pointer" %>
+          </div>
+
+          <%# Mobile hamburger %>
+          <button data-action="toggle#toggle" class="md:hidden p-2 rounded-lg text-slate-500 hover:bg-stone-100 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <%# Mobile dropdown menu %>
+      <div class="hidden md:hidden border-t border-stone-100" data-toggle-target="menu">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col gap-1">
+          <p class="text-xs font-semibold uppercase tracking-widest text-slate-400 px-3 mb-1">Navigation</p>
+          <a href="<%= dashboard_root_path %>" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-stone-100">Overview</a>
+          <a href="<%= dashboard_books_path %>" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-stone-100">Books</a>
+          <a href="<%= dashboard_authors_path %>" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-stone-100">Authors</a>
+          <a href="<%= dashboard_tags_path %>" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-stone-100">Tags</a>
+          <a href="<%= dashboard_loans_path %>" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-stone-100">Loans</a>
+          <a href="<%= dashboard_users_path %>" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-stone-100">Users</a>
+          <div class="border-t border-stone-100 mt-1 pt-1 flex flex-col gap-1">
+            <%= link_to "← Back to site", root_path, class: "px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-stone-100" %>
+            <%= button_to "Sign out", destroy_user_session_path, method: :delete,
+                  class: "w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-stone-100 cursor-pointer" %>
           </div>
         </div>
       </div>
     </nav>
 
-    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex gap-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
-      <%# Sidebar %>
-      <aside class="w-52 shrink-0">
-        <%= render "dashboard/shared/sidebar" %>
-      </aside>
+      <%# Flash messages %>
+      <% if notice %>
+        <div class="flex items-center gap-2 p-3 mb-4 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm" data-turbo-temporary>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <%= notice %>
+        </div>
+      <% end %>
+      <% if alert %>
+        <div class="flex items-center gap-2 p-3 mb-4 rounded-lg bg-red-50 border border-red-200 text-red-800 text-sm" data-turbo-temporary>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <%= alert %>
+        </div>
+      <% end %>
 
-      <%# Main content %>
-      <div class="flex-1 min-w-0">
-        <% if notice %>
-          <div class="flex items-center gap-2 p-3 mb-4 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm" data-turbo-temporary>
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <%= notice %>
-          </div>
-        <% end %>
-        <% if alert %>
-          <div class="flex items-center gap-2 p-3 mb-4 rounded-lg bg-red-50 border border-red-200 text-red-800 text-sm" data-turbo-temporary>
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <%= alert %>
-          </div>
-        <% end %>
-        <%= yield %>
+      <div class="flex gap-6">
+
+        <%# Sidebar — desktop only %>
+        <aside class="hidden lg:block w-52 shrink-0">
+          <%= render "dashboard/shared/sidebar" %>
+        </aside>
+
+        <%# Main content %>
+        <div class="flex-1 min-w-0">
+          <%= yield %>
+        </div>
+
       </div>
-
     </div>
   </body>
 </html>

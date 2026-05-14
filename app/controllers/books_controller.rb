@@ -11,8 +11,9 @@ class BooksController < ApplicationController
   end
 
   def show
-    @active_loan = @book.loans.where(returned_at: nil).order(loaned_at: :desc).first
-    @user_active_loan = current_user ? @book.loans.where(user: current_user, returned_at: nil).first : nil
+    @active_loan       = @book.loans.where(returned_at: nil).order(loaned_at: :desc).first
+    @user_active_loan  = current_user ? @book.loans.where(user: current_user, returned_at: nil).first : nil
+    @user_active_count = current_user ? current_user.loans.where(returned_at: nil).count : 0
   end
 
   private

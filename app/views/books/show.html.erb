@@ -27,12 +27,17 @@
               You have this book
             </div>
             <p class="text-xs text-slate-400 text-center mt-2">Due <%= @user_active_loan.due_at.strftime("%d %B %Y") %></p>
+          <% elsif @user_active_count >= 3 %>
+            <div class="py-2.5 rounded-lg bg-stone-100 text-center text-sm font-medium text-slate-500">
+              Loan limit reached
+            </div>
+            <p class="text-xs text-slate-400 text-center mt-2">Return a book to loan another (max 3)</p>
           <% else %>
             <%= button_to book_loans_path(@book), method: :post,
                   class: "w-full py-2.5 rounded-lg bg-yellow-400 text-slate-900 text-sm font-semibold hover:bg-yellow-500 transition-colors cursor-pointer" do %>
               Loan this Book
             <% end %>
-            <p class="text-xs text-slate-400 text-center mt-2">7-day loan period</p>
+            <p class="text-xs text-slate-400 text-center mt-2">7-day loan period · <%= 3 - @user_active_count %> slot<%= (3 - @user_active_count) == 1 ? "" : "s" %> remaining</p>
           <% end %>
         <% else %>
           <%= link_to new_user_session_path, class: "block w-full py-2.5 rounded-lg bg-yellow-400 text-slate-900 text-sm font-semibold hover:bg-yellow-500 transition-colors text-center" do %>

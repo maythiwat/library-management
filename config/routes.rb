@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   end
 
   resources :loans, only: [ :index ]
+  resource :profile, only: [ :show, :edit, :update ]
 
   namespace :dashboard do
     root to: "overview#index"
