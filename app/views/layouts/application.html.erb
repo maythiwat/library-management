@@ -11,19 +11,72 @@
 
     <%= yield :head %>
 
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
   </head>
 
-  <body>
-    <%= yield %>
+  <body class="min-h-screen bg-stone-50 text-slate-900 antialiased">
+
+    <nav class="bg-white border-b border-stone-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-14">
+          <div class="flex items-center gap-8">
+            <a href="/" class="flex items-center gap-2 font-bold text-base tracking-tight text-slate-900 hover:text-yellow-600 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+              Library
+            </a>
+            <% if user_signed_in? %>
+              <a href="<%= books_path %>" class="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">Books</a>
+            <% end %>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <% if user_signed_in? %>
+              <span class="text-sm text-slate-400 hidden sm:block"><%= current_user.email %></span>
+              <%= button_to "Sign out", destroy_user_session_path, method: :delete,
+                    class: "text-sm font-medium px-3 py-1.5 rounded-lg text-slate-600 hover:bg-stone-100 transition-colors cursor-pointer" %>
+            <% else %>
+              <%= link_to "Sign in", new_user_session_path,
+                    class: "text-sm font-medium px-3 py-1.5 rounded-lg text-slate-600 hover:bg-stone-100 transition-colors" %>
+              <%= link_to "Sign up", new_user_registration_path,
+                    class: "text-sm font-medium px-3 py-1.5 rounded-lg bg-yellow-400 text-slate-900 hover:bg-yellow-500 transition-colors" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <% if notice %>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+        <div class="flex items-center gap-3 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm" data-turbo-temporary>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <%= notice %>
+        </div>
+      </div>
+    <% end %>
+
+    <% if alert %>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+        <div class="flex items-center gap-3 p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-sm" data-turbo-temporary>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <%= alert %>
+        </div>
+      </div>
+    <% end %>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <%= yield %>
+    </main>
+
   </body>
 </html>
